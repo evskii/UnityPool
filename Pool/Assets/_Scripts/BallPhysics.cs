@@ -7,11 +7,10 @@ public class BallPhysics : MonoBehaviour
 {
     private Rigidbody rb;
 
-    [SerializeField] private Vector3 velocity;
-    [SerializeField] private float magnitude;
-
-    [SerializeField] private Vector3 angularVelocity;
-    [SerializeField] private float angularVelocityMag;
+    public Vector3 velocity;
+    public float magnitude;
+    public Vector3 angularVelocity;
+    public float angularVelocityMag;
 
     private void Start() {
         rb = GetComponent<Rigidbody>();
@@ -24,5 +23,20 @@ public class BallPhysics : MonoBehaviour
 
         angularVelocity = rb.angularVelocity;
         angularVelocityMag = rb.angularVelocity.magnitude;
+
+        if (velocity.y > 0) {
+            velocity.y = 0;
+            rb.velocity = velocity;
+        }
+    }
+
+    private void OnCollisionEnter(Collision other) {
+        if (other.transform.TryGetComponent(out BallPhysics ball)) {
+            // if (magnitude >= ball.magnitude) {
+            //     // Vector3 forceDir = (ball.transform.position - transform.position).normalized;
+            //     ball.GetComponent<Rigidbody>().AddForce((other.impulse/Time.fixedDeltaTime) * 0.75f);
+            //     rb.AddForce((other.impulse/Time.fixedDeltaTime) * -0.25f);
+            // }
+        }
     }
 }
