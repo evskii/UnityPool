@@ -27,6 +27,9 @@ public class PoolManager : MonoBehaviour
 	private Vector3 shotDir;
 	[SerializeField] private Image shotPowerImage;
 	private bool shotLinedUp = false;
+
+	[SerializeField] private LayerMask ballLayer;
+	[SerializeField] private LayerMask tableLayer;
 	
 	
 	private void Start() {
@@ -67,9 +70,15 @@ public class PoolManager : MonoBehaviour
 		}
 
 		if (Input.GetMouseButtonUp(0)) {
-			TakeShot(shotDir);
-			shotLinedUp = false;
-			Debug.Log(shotForce);
+			if (shotForce <= 0.25f) {
+				shotLinedUp = false;
+				Debug.Log("Shot Cancelled");
+			} else {
+				TakeShot(shotDir);
+				shotLinedUp = false;
+				Debug.Log("Shot Taken (Force: " + shotForce + ")");
+			}
+			
 		}
 		
 		//Other Shit
@@ -78,36 +87,49 @@ public class PoolManager : MonoBehaviour
 
 	private void DrawGuideline() {
 		guideline.enabled = true;
-		Vector3 ballWhiteGuidePos = new Vector3(ballWhite.transform.position.x, 0.25f, ballWhite.transform.position.z);
+		Vector3 ballWhiteGuidePos = ballWhite.transform.position;
 		guideline.SetPosition(0, ballWhiteGuidePos);
 
 		if (shotLinedUp) {
-			guideline.SetPosition(1, ballWhiteGuidePos + shotDir.normalized * Vector3.Distance(ballWhite.transform.position, mouseStartPos));
+			Vector3 mousePosMod = new Vector3(mouseStartPos.x, ballWhiteGuidePos.y, mouseStartPos.z);
+			Vector3 dir = shotDir;
+			dir.y = 0;
+			guideline.SetPosition(1, ballWhiteGuidePos + dir.normalized * Vector3.Distance(ballWhite.transform.position, mousePosMod));
 		} else {
-			Vector3 mouseGuidePos = new Vector3(MousePos().x, 0.25f, MousePos().z);
+			Vector3 mouseGuidePos = new Vector3(MousePos().x, ballWhite.transform.position.y, MousePos().z);
 			guideline.SetPosition(1, mouseGuidePos);
 		}
-		
+
+		// RaycastHit hit;
+		// Vector3 fixedMousPos = new Vector3(MousePos().x, ballWhite.transform.position.y, MousePos().z);
+		// Vector3 rayDir = shotLinedUp ? new Vector3(shotDir.x, 0, shotDir.z) : (fixedMousPos - ballWhite.transform.position).normalized;
+		// Debug.DrawRay(ballWhite.transform.position, (fixedMousPos - ballWhite.transform.position).normalized * 2, Color.red);
+		// if (Physics.Raycast(ballWhite.transform.position, rayDir, out hit, Mathf.Infinity, ballLayer)) {
+		// 	Debug.Log("HIT BALL: " + hit.transform.name);
+		// 	Vector3 contactDir = (hit.transform.position - hit.point).normalized;
+		// 	guideline.positionCount = 3;
+		// 	guideline.SetPosition(2, hit.point + contactDir * 5);
+		// }
 	}
 	
 	private Vector3 MousePos() {
 		Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 		RaycastHit hit;
-		if (Physics.Raycast(ray, out hit, 100)) {
+		if (Physics.Raycast(ray, out hit, 100, 1<<6)) {
 			return hit.point;
 		}
 		return Vector3.zero;
 	}
 
 	private void TakeShot(Vector3 dir) {
-		ballWhite.GetComponent<Rigidbody>().AddForce(dir * shotForce, ForceMode.Impulse);
+		ballWhite.GetComponent<Rigidbody>().AddForce(dir * (shotForce * Random.Range(0.90f,1.1f)), ForceMode.Impulse);
 	}
 
 	private void OnDrawGizmos() {
 		// Gizmos.DrawRay(ballWhite.transform.position, testBreakDir * (testBreakForce/10));
-		
-		Gizmos.color = Color.white;
-		Gizmos.DrawLine(ballWhite.transform.position, MousePos());
+		//
+		// Gizmos.color = Color.white;
+		// Gizmos.DrawLine(ballWhite.transform.position, MousePos());
 
 	}
 }
