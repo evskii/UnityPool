@@ -893,7 +893,7 @@ GameObject:
   - component: {fileID: 764046684}
   - component: {fileID: 764046683}
   - component: {fileID: 764046688}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Ball_White
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1967,12 +1967,8 @@ MonoBehaviour:
   powerMin: 0.1
   maxMouseDistance: 5
   shotPowerImage: {fileID: 308325597}
-  ballLayer:
-    serializedVersion: 2
-    m_Bits: 128
-  tableLayer:
-    serializedVersion: 2
-    m_Bits: 64
+  predictionRayCount: 360
+  collisionBoundsRadius: 0.08
 --- !u!4 &1366379199
 Transform:
   m_ObjectHideFlags: 0

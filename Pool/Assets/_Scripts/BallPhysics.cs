@@ -12,6 +12,8 @@ public class BallPhysics : MonoBehaviour
     public Vector3 angularVelocity;
     public float angularVelocityMag;
 
+    public bool isWhiteBall = false;
+    
     private void Start() {
         rb = GetComponent<Rigidbody>();
 
@@ -37,6 +39,10 @@ public class BallPhysics : MonoBehaviour
             //     ball.GetComponent<Rigidbody>().AddForce((other.impulse/Time.fixedDeltaTime) * 0.75f);
             //     rb.AddForce((other.impulse/Time.fixedDeltaTime) * -0.25f);
             // }
+
+            if (isWhiteBall) {
+                Debug.Log(other.contacts[0].point);
+            }
         }
     }
 }

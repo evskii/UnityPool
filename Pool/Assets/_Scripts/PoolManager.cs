@@ -3,9 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Net.Mime;
 
+using Unity.VisualScripting;
+
 using UnityEditor;
 
 using UnityEngine;
+using UnityEngine.PlayerLoop;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -28,8 +31,16 @@ public class PoolManager : MonoBehaviour
 	[SerializeField] private Image shotPowerImage;
 	private bool shotLinedUp = false;
 
-	[SerializeField] private LayerMask ballLayer;
-	[SerializeField] private LayerMask tableLayer;
+	[Header("Collision Prediction")]
+	[SerializeField] private int predictionRayCount = 10;
+	[SerializeField] private float collisionBoundsRadius = 0.18f;
+	private Vector3 predictedHitPoint;
+	private GameObject predictedHitBall;
+	
+
+
+	// [SerializeField] private LayerMask ballLayer;
+	// [SerializeField] private LayerMask tableLayer;
 	
 	
 	private void Start() {
@@ -76,9 +87,16 @@ public class PoolManager : MonoBehaviour
 			} else {
 				TakeShot(shotDir);
 				shotLinedUp = false;
-				Debug.Log("Shot Taken (Force: " + shotForce + ")");
+				// Debug.Log("Shot Taken (Force: " + shotForce + ")");
 			}
 			
+			Debug.Log("Predicted hit pos: " + predictedHitPoint);
+			
+		}
+
+		if (!Input.GetMouseButton(0)) {
+			predictedHitPoint = GetPredictedHitPoint();
+			predictedHitBall = GetPredictedBallHit();
 		}
 		
 		//Other Shit
@@ -90,15 +108,37 @@ public class PoolManager : MonoBehaviour
 		Vector3 ballWhiteGuidePos = ballWhite.transform.position;
 		guideline.SetPosition(0, ballWhiteGuidePos);
 
-		if (shotLinedUp) {
-			Vector3 mousePosMod = new Vector3(mouseStartPos.x, ballWhiteGuidePos.y, mouseStartPos.z);
-			Vector3 dir = shotDir;
-			dir.y = 0;
-			guideline.SetPosition(1, ballWhiteGuidePos + dir.normalized * Vector3.Distance(ballWhite.transform.position, mousePosMod));
+		// if (shotLinedUp) {
+		// 	Vector3 mousePosMod = new Vector3(mouseStartPos.x, ballWhiteGuidePos.y, mouseStartPos.z);
+		// 	Vector3 dir = shotDir;
+		// 	dir.y = 0;
+		// 	guideline.SetPosition(1, ballWhiteGuidePos + dir.normalized * Vector3.Distance(ballWhite.transform.position, mousePosMod));
+		// } else {
+		// 	Vector3 mouseGuidePos = new Vector3(MousePos().x, ballWhite.transform.position.y, MousePos().z);
+		// 	guideline.SetPosition(1, mouseGuidePos);
+		// }
+
+		if (predictedHitBall) {
+			// Debug.Log(GetPredictedBallHit().name);
+			Vector3 bounceOffDir = (predictedHitPoint - predictedHitBall.transform.position).normalized;
+			Vector3 bounceOffPos = predictedHitPoint - bounceOffDir * 1.5f;
+			guideline.positionCount = 3;
+			guideline.SetPosition(2, bounceOffPos);
+			guideline.SetPosition(1, predictedHitPoint);
 		} else {
-			Vector3 mouseGuidePos = new Vector3(MousePos().x, ballWhite.transform.position.y, MousePos().z);
-			guideline.SetPosition(1, mouseGuidePos);
+			guideline.positionCount = 2;
+			if (shotLinedUp) {
+				Vector3 mousePosMod = new Vector3(mouseStartPos.x, ballWhiteGuidePos.y, mouseStartPos.z);
+				Vector3 dir = shotDir;
+				dir.y = 0;
+				guideline.SetPosition(1, ballWhiteGuidePos + dir.normalized * Vector3.Distance(ballWhite.transform.position, mousePosMod));
+			} else {
+				Vector3 mouseGuidePos = new Vector3(MousePos().x, ballWhite.transform.position.y, MousePos().z);
+				guideline.SetPosition(1, mouseGuidePos);
+			}
 		}
+		
+		
 
 		// RaycastHit hit;
 		// Vector3 fixedMousPos = new Vector3(MousePos().x, ballWhite.transform.position.y, MousePos().z);
@@ -110,6 +150,62 @@ public class PoolManager : MonoBehaviour
 		// 	guideline.positionCount = 3;
 		// 	guideline.SetPosition(2, hit.point + contactDir * 5);
 		// }
+	}
+
+	private Vector3 GetPredictedHitPoint() {
+		Vector3 closestHitPoint = Vector3.zero;
+		for (int i = 0; i < predictionRayCount; i++) {
+			RaycastHit hitTest;
+			float x = collisionBoundsRadius * Mathf.Cos((360 / predictionRayCount) * i) + ballWhite.transform.position.x;
+			float z = collisionBoundsRadius * Mathf.Sin((360 / predictionRayCount) * i) + ballWhite.transform.position.z;
+			Vector3 rayStartPos = new Vector3(x, ballWhite.transform.position.y, z);
+			
+			Vector3 mouseModPos = MousePos();
+			mouseModPos.y = ballWhite.transform.position.y;
+
+			Vector3 rayDir = mouseModPos - ballWhite.transform.position;
+			rayDir = rayDir.normalized;
+			
+			Debug.DrawRay(rayStartPos, rayDir * 6);
+
+			if (Physics.Raycast(rayStartPos, rayDir, out hitTest, 100f, 1 << 7)) {
+				if (closestHitPoint == Vector3.zero) {
+					closestHitPoint = hitTest.point;
+				} else {
+					if (Vector3.Distance(ballWhite.transform.position, hitTest.point) < Vector3.Distance(ballWhite.transform.position, closestHitPoint)) {
+						closestHitPoint = hitTest.point;
+					}
+				}
+			}
+		}
+		return closestHitPoint;
+	}
+
+	private GameObject GetPredictedBallHit() {
+		GameObject closestHitBall = null;
+		for (int i = 0; i < predictionRayCount; i++) {
+			RaycastHit hitTest;
+			float x = collisionBoundsRadius * Mathf.Cos((360 / predictionRayCount) * i) + ballWhite.transform.position.x;
+			float z = collisionBoundsRadius * Mathf.Sin((360 / predictionRayCount) * i) + ballWhite.transform.position.z;
+			Vector3 rayStartPos = new Vector3(x, ballWhite.transform.position.y, z);
+			
+			Vector3 mouseModPos = MousePos();
+			mouseModPos.y = ballWhite.transform.position.y;
+
+			Vector3 rayDir = mouseModPos - ballWhite.transform.position;
+			rayDir = rayDir.normalized;
+
+			if (Physics.Raycast(rayStartPos, rayDir, out hitTest, 100f, 1 << 7)) {
+				if (closestHitBall == null) {
+					closestHitBall = hitTest.transform.gameObject;
+				} else {
+					if (Vector3.Distance(ballWhite.transform.position, hitTest.transform.position) < Vector3.Distance(ballWhite.transform.position, closestHitBall.transform.position)) {
+						closestHitBall = hitTest.transform.gameObject;
+					}
+				}
+			}
+		}
+		return closestHitBall;
 	}
 	
 	private Vector3 MousePos() {
@@ -131,5 +227,14 @@ public class PoolManager : MonoBehaviour
 		// Gizmos.color = Color.white;
 		// Gizmos.DrawLine(ballWhite.transform.position, MousePos());
 
+		// Gizmos.color = new Color(1, 0, 1, 0.33f);
+		// Gizmos.DrawSphere(ballWhite.transform.position, collisionBoundsRadius);
+		//
+		// Gizmos.color = Color.yellow;
+		// for (int i = 0; i < predictionRayCount; i++) {
+		// 	float x = collisionBoundsRadius * Mathf.Cos((360 / predictionRayCount) * i) + ballWhite.transform.position.x;
+		// 	float z = collisionBoundsRadius * Mathf.Sin((360 / predictionRayCount) * i) + ballWhite.transform.position.z;
+		// 	Gizmos.DrawRay(new Vector3(x, ballWhite.transform.position.y, z), Vector3.forward);
+		// }
 	}
 }
