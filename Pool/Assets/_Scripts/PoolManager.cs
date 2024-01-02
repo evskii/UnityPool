@@ -60,33 +60,40 @@ public class PoolManager : MonoBehaviour
 			TestBreak();
 		}
 
-		
-		if (Input.GetMouseButtonDown(0)) {
-			mouseStartPos = MousePos();
-			shotDir = (MousePos() - ballWhite.transform.position).normalized;
-			shotLinedUp = true;
-		}
-
-		if (Input.GetMouseButton(0)) {
-			shotForce = EvMath.Map(Mathf.Abs(Vector3.Distance(mouseStartPos, MousePos())), 0, maxMouseDistance, powerMin, powerMax);
-			shotForce = Mathf.Clamp(shotForce, powerMin, powerMax);
-			shotPowerImage.fillAmount = EvMath.Map(shotForce, powerMin, powerMax, 0, 1);
-		}
-
-		if (Input.GetMouseButtonUp(0)) {
-			if (shotForce <= 0.25f) {
-				shotLinedUp = false;
-				Debug.Log("Shot Cancelled");
-			} else {
-				TakeShot(shotDir);
-				shotLinedUp = false;
-				// Debug.Log("Shot Taken (Force: " + shotForce + ")");
+		if (!IsWhiteMoving()) {
+			if (Input.GetMouseButtonDown(0)) {
+				mouseStartPos = MousePos();
+				shotDir = (MousePos() - ballWhite.transform.position).normalized;
+				shotLinedUp = true;
 			}
-			
-			
+
+			if (Input.GetMouseButton(0)) {
+				shotForce = EvMath.Map(Mathf.Abs(Vector3.Distance(mouseStartPos, MousePos())), 0, maxMouseDistance, powerMin, powerMax);
+				shotForce = Mathf.Clamp(shotForce, powerMin, powerMax);
+				shotPowerImage.fillAmount = EvMath.Map(shotForce, powerMin, powerMax, 0, 1);
+			}
+
+			if (Input.GetMouseButtonUp(0)) {
+				if (shotForce <= 0.25f) {
+					shotLinedUp = false;
+					Debug.Log("Shot Cancelled");
+				} else {
+					TakeShot(shotDir);
+					shotLinedUp = false;
+					// Debug.Log("Shot Taken (Force: " + shotForce + ")");
+				}
+			}
 		}
+		
+		
+		
 		//Other Shit
-		DrawGuideline();
+		if (!IsWhiteMoving()) {
+			guideline.enabled = true;
+			DrawGuideline();	
+		} else {
+			guideline.enabled = false;
+		}
 	}
 
 	private void DrawGuideline() {
@@ -104,14 +111,14 @@ public class PoolManager : MonoBehaviour
 			guideline.SetPosition(1, mouseGuidePos);
 		}
 
-		if (GetPredictedCollisionPoint().hitObject != ballWhite) {
-			guideline.positionCount = 3;
-			Vector3 hitPoint = GetPredictedCollisionPoint().hitPoint;
-			guideline.SetPosition(1, hitPoint);
-			guideline.SetPosition(2, hitPoint + (GetPredictedCollisionPoint().hitObject.transform.position - hitPoint).normalized * 2);
-		} else {
-			guideline.positionCount = 2;
-		}
+		// if (GetPredictedCollisionPoint().hitObject != ballWhite) {
+		// 	guideline.positionCount = 3;
+		// 	Vector3 hitPoint = GetPredictedCollisionPoint().hitPoint;
+		// 	guideline.SetPosition(1, hitPoint);
+		// 	guideline.SetPosition(2, hitPoint + (GetPredictedCollisionPoint().hitObject.transform.position - hitPoint).normalized * 2);
+		// } else {
+		// 	guideline.positionCount = 2;
+		// }
 	}
 
 	private struct PredictionData
@@ -154,6 +161,10 @@ public class PoolManager : MonoBehaviour
 
 	private void TakeShot(Vector3 dir) {
 		ballWhite.GetComponent<Rigidbody>().AddForce(dir * (shotForce * Random.Range(0.90f,1.1f)), ForceMode.Impulse);
+	}
+
+	private bool IsWhiteMoving() {
+		return ballWhite.GetComponent<Rigidbody>().velocity.magnitude >= 0.1f;
 	}
 
 	private void OnDrawGizmos() {
