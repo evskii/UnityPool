@@ -530,6 +530,7 @@ MonoBehaviour:
   magnitude: 0
   angularVelocity: {x: 0, y: 0, z: 0}
   angularVelocityMag: 0
+  isWhiteBall: 0
 --- !u!1 &510119485
 GameObject:
   m_ObjectHideFlags: 0
@@ -785,6 +786,7 @@ MonoBehaviour:
   magnitude: 0
   angularVelocity: {x: 0, y: 0, z: 0}
   angularVelocityMag: 0
+  isWhiteBall: 0
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -1029,6 +1031,7 @@ MonoBehaviour:
   magnitude: 0
   angularVelocity: {x: 0, y: 0, z: 0}
   angularVelocityMag: 0
+  isWhiteBall: 0
 --- !u!1 &815138812
 GameObject:
   m_ObjectHideFlags: 0
@@ -1412,6 +1415,7 @@ MonoBehaviour:
   magnitude: 0
   angularVelocity: {x: 0, y: 0, z: 0}
   angularVelocityMag: 0
+  isWhiteBall: 0
 --- !u!1 &1138309295
 GameObject:
   m_ObjectHideFlags: 0
@@ -1562,6 +1566,7 @@ MonoBehaviour:
   magnitude: 0
   angularVelocity: {x: 0, y: 0, z: 0}
   angularVelocityMag: 0
+  isWhiteBall: 0
 --- !u!1 &1215194920
 GameObject:
   m_ObjectHideFlags: 0
@@ -1780,6 +1785,7 @@ MonoBehaviour:
   magnitude: 0
   angularVelocity: {x: 0, y: 0, z: 0}
   angularVelocityMag: 0
+  isWhiteBall: 0
 --- !u!1 &1330347318
 GameObject:
   m_ObjectHideFlags: 0
@@ -1930,6 +1936,7 @@ MonoBehaviour:
   magnitude: 0
   angularVelocity: {x: 0, y: 0, z: 0}
   angularVelocityMag: 0
+  isWhiteBall: 0
 --- !u!1 &1366379197
 GameObject:
   m_ObjectHideFlags: 0
@@ -1967,8 +1974,7 @@ MonoBehaviour:
   powerMin: 0.1
   maxMouseDistance: 5
   shotPowerImage: {fileID: 308325597}
-  predictionRayCount: 360
-  collisionBoundsRadius: 0.08
+  ballRadius: 0.09
 --- !u!4 &1366379199
 Transform:
   m_ObjectHideFlags: 0
@@ -2284,6 +2290,7 @@ MonoBehaviour:
   magnitude: 0
   angularVelocity: {x: 0, y: 0, z: 0}
   angularVelocityMag: 0
+  isWhiteBall: 0
 --- !u!1 &1668750305
 GameObject:
   m_ObjectHideFlags: 0
@@ -2434,6 +2441,7 @@ MonoBehaviour:
   magnitude: 0
   angularVelocity: {x: 0, y: 0, z: 0}
   angularVelocityMag: 0
+  isWhiteBall: 0
 --- !u!1 &1678943540
 GameObject:
   m_ObjectHideFlags: 0
@@ -2898,6 +2906,7 @@ MonoBehaviour:
   magnitude: 0
   angularVelocity: {x: 0, y: 0, z: 0}
   angularVelocityMag: 0
+  isWhiteBall: 0
 --- !u!1 &1776372576
 GameObject:
   m_ObjectHideFlags: 0
@@ -3048,6 +3057,7 @@ MonoBehaviour:
   magnitude: 0
   angularVelocity: {x: 0, y: 0, z: 0}
   angularVelocityMag: 0
+  isWhiteBall: 0
 --- !u!1 &1797663521
 GameObject:
   m_ObjectHideFlags: 0
@@ -3304,6 +3314,38 @@ MonoBehaviour:
   magnitude: 0
   angularVelocity: {x: 0, y: 0, z: 0}
   angularVelocityMag: 0
+  isWhiteBall: 0
+--- !u!1 &1900824264
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1900824265}
+  m_Layer: 0
+  m_Name: BasicSpawner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1900824265
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1900824264}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 10
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1927918819
 GameObject:
   m_ObjectHideFlags: 0
@@ -3454,6 +3496,7 @@ MonoBehaviour:
   magnitude: 0
   angularVelocity: {x: 0, y: 0, z: 0}
   angularVelocityMag: 0
+  isWhiteBall: 0
 --- !u!1 &1979946120
 GameObject:
   m_ObjectHideFlags: 0
@@ -3604,6 +3647,7 @@ MonoBehaviour:
   magnitude: 0
   angularVelocity: {x: 0, y: 0, z: 0}
   angularVelocityMag: 0
+  isWhiteBall: 0
 --- !u!1 &1985591401
 GameObject:
   m_ObjectHideFlags: 0
@@ -3754,6 +3798,7 @@ MonoBehaviour:
   magnitude: 0
   angularVelocity: {x: 0, y: 0, z: 0}
   angularVelocityMag: 0
+  isWhiteBall: 0
 --- !u!1001 &2020325320
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4139,3 +4184,4 @@ MonoBehaviour:
   magnitude: 0
   angularVelocity: {x: 0, y: 0, z: 0}
   angularVelocityMag: 0
+  isWhiteBall: 0
