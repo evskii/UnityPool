@@ -17,6 +17,11 @@ using Random = UnityEngine.Random;
 
 public class PoolManager : MonoBehaviour
 {
+	[Header("References")]
+	[SerializeField] private int playerNumber = 1;
+	[SerializeField] private GameObject shootingUI;
+	
+	[Header("Shot Settings")]
 	[SerializeField] private GameObject ballWhite;
 	[SerializeField] private float testBreakForce;
 	[SerializeField] private Vector3 testBreakDir;
@@ -56,11 +61,17 @@ public class PoolManager : MonoBehaviour
 			ReloadScene();
 		}
 
-		if (Input.GetKeyDown(KeyCode.Space)) {
-			TestBreak();
-		}
+		// if (Input.GetKeyDown(KeyCode.Space)) {
+		// 	TestBreak();
+		// }
 
-		if (!IsWhiteMoving()) {
+		if (GameplayManager.instance.MyTurn(playerNumber)) {
+			shootingUI.SetActive(true);
+		} else {
+			shootingUI.SetActive(false);
+		}
+		
+		if (!IsWhiteMoving() && GameplayManager.instance.MyTurn(playerNumber)) {
 			if (Input.GetMouseButtonDown(0)) {
 				mouseStartPos = MousePos();
 				shotDir = (MousePos() - ballWhite.transform.position).normalized;
@@ -88,12 +99,14 @@ public class PoolManager : MonoBehaviour
 		
 		
 		//Other Shit
-		if (!IsWhiteMoving()) {
+		if (!IsWhiteMoving() && GameplayManager.instance.MyTurn(playerNumber)) {
 			guideline.enabled = true;
 			DrawGuideline();	
 		} else {
 			guideline.enabled = false;
 		}
+		
+		
 	}
 
 	private void DrawGuideline() {
@@ -161,6 +174,7 @@ public class PoolManager : MonoBehaviour
 
 	private void TakeShot(Vector3 dir) {
 		ballWhite.GetComponent<Rigidbody>().AddForce(dir * (shotForce * Random.Range(0.90f,1.1f)), ForceMode.Impulse);
+		GameplayManager.instance.NextTurn();
 	}
 
 	private bool IsWhiteMoving() {
