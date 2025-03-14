@@ -115,7 +115,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2915432243701101150}
   m_Layer: 0
-  m_Name: Card_Wall
+  m_Name: Spawnable_Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -42,7 +42,9 @@ public abstract class Card : MonoBehaviour
             UpdateCard();
             
             cardVisuals.SetActive(false);
-        } else {
+        }
+
+        if (!inPlayArea && !isPlayed) {
             cardVisuals.SetActive(true);
         }
 
