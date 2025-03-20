@@ -1,17 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Net.Mime;
-
-using Unity.VisualScripting;
-
-using UnityEditor;
-
 using UnityEngine;
-using UnityEngine.PlayerLoop;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-
 using Random = UnityEngine.Random;
 
 
@@ -55,59 +47,50 @@ public class PoolManager : MonoBehaviour
 		SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
 	}
 
-	private void Update() {
-		//Keyboard Controls
-		if (Input.GetKeyDown(KeyCode.R)) {
-			ReloadScene();
-		}
-
-		// if (Input.GetKeyDown(KeyCode.Space)) {
-		// 	TestBreak();
-		// }
-
-		if (GameplayManager.instance.MyTurn(playerNumber)) {
-			shootingUI.SetActive(true);
-		} else {
-			shootingUI.SetActive(false);
-		}
-		
-		if (!IsWhiteMoving() && GameplayManager.instance.MyTurn(playerNumber)) {
-			if (Input.GetMouseButtonDown(0)) {
-				mouseStartPos = MousePos();
-				shotDir = (MousePos() - ballWhite.transform.position).normalized;
-				shotLinedUp = true;
-			}
-
-			if (Input.GetMouseButton(0)) {
-				shotForce = EvMath.Map(Mathf.Abs(Vector3.Distance(mouseStartPos, MousePos())), 0, maxMouseDistance, powerMin, powerMax);
-				shotForce = Mathf.Clamp(shotForce, powerMin, powerMax);
-				shotPowerImage.fillAmount = EvMath.Map(shotForce, powerMin, powerMax, 0, 1);
-			}
-
-			if (Input.GetMouseButtonUp(0)) {
-				if (shotForce <= 0.25f) {
-					shotLinedUp = false;
-					Debug.Log("Shot Cancelled");
-				} else {
-					TakeShot(shotDir);
-					shotLinedUp = false;
-					// Debug.Log("Shot Taken (Force: " + shotForce + ")");
-				}
-			}
-		}
-		
-		
-		
-		//Other Shit
-		if (!IsWhiteMoving() && GameplayManager.instance.MyTurn(playerNumber)) {
-			guideline.enabled = true;
-			DrawGuideline();	
-		} else {
-			guideline.enabled = false;
-		}
-		
-		
-	}
+	// private void Update() {
+	// 	if (GameplayManager.instance.MyTurn(playerNumber)) {
+	// 		shootingUI.SetActive(true);
+	// 	} else {
+	// 		shootingUI.SetActive(false);
+	// 	}
+	// 	
+	// 	if (!IsWhiteMoving() && GameplayManager.instance.MyTurn(playerNumber)) {
+	// 		if (Input.GetMouseButtonDown(0)) {
+	// 			mouseStartPos = MousePos();
+	// 			shotDir = (MousePos() - ballWhite.transform.position).normalized;
+	// 			shotLinedUp = true;
+	// 		}
+	//
+	// 		if (Input.GetMouseButton(0)) {
+	// 			shotForce = EvMath.Map(Mathf.Abs(Vector3.Distance(mouseStartPos, MousePos())), 0, maxMouseDistance, powerMin, powerMax);
+	// 			shotForce = Mathf.Clamp(shotForce, powerMin, powerMax);
+	// 			shotPowerImage.fillAmount = EvMath.Map(shotForce, powerMin, powerMax, 0, 1);
+	// 		}
+	//
+	// 		if (Input.GetMouseButtonUp(0)) {
+	// 			if (shotForce <= 0.25f) {
+	// 				shotLinedUp = false;
+	// 				Debug.Log("Shot Cancelled");
+	// 			} else {
+	// 				TakeShot(shotDir);
+	// 				shotLinedUp = false;
+	// 				// Debug.Log("Shot Taken (Force: " + shotForce + ")");
+	// 			}
+	// 		}
+	// 	}
+	// 	
+	// 	
+	// 	
+	// 	//Other Shit
+	// 	if (!IsWhiteMoving() && GameplayManager.instance.MyTurn(playerNumber)) {
+	// 		guideline.enabled = true;
+	// 		DrawGuideline();	
+	// 	} else {
+	// 		guideline.enabled = false;
+	// 	}
+	// 	
+	// 	
+	// }
 
 	private void DrawGuideline() {
 		guideline.enabled = true;
@@ -172,10 +155,10 @@ public class PoolManager : MonoBehaviour
 		return Vector3.zero;
 	}
 
-	private void TakeShot(Vector3 dir) {
-		ballWhite.GetComponent<Rigidbody>().AddForce(dir * (shotForce * Random.Range(0.90f,1.1f)), ForceMode.Impulse);
-		GameplayManager.instance.NextTurn();
-	}
+	// private void TakeShot(Vector3 dir) {
+	// 	ballWhite.GetComponent<Rigidbody>().AddForce(dir * (shotForce * Random.Range(0.90f,1.1f)), ForceMode.Impulse);
+	// 	GameplayManager.instance.NextTurn();
+	// }
 
 	private bool IsWhiteMoving() {
 		return ballWhite.GetComponent<Rigidbody>().velocity.magnitude >= 0.1f;

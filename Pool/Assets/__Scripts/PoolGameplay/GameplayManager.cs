@@ -1,56 +1,46 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+
+using Fusion;
+
 using UnityEngine;
 
-using Random = UnityEngine.Random;
-
-public class GameplayManager : MonoBehaviour
+public class GameplayManager : NetworkBehaviour
 {
     public static GameplayManager instance;
-    private void Awake() {
+    private ChangeDetector changeDetector;
+    
+    private int turnNumber = 0;
+
+    [SerializeField] private GameObject shotUi;
+
+    public override void Spawned() {
         instance = this;
-    }
+        
+        changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
 
-    [SerializeField] private int playersTurn = 1;
-    [SerializeField] private int turnNumber = 0;
-
-    [Header("Settings")]
-    public Vector2 tableSize;
-
-    private void Start() {
         turnNumber = 0;
-        playersTurn = 1;
     }
-
-    private void Update() {
-        if (Input.GetKeyDown(KeyCode.Space)) {
-            NextTurn();
+    
+    [Networked] public int playersTurn { get; set; }
+    
+    public void NextTurn(PoolPlayer calledBy) {
+        if (playersTurn == calledBy.playerNumber) {
+            playersTurn = playersTurn == 1 ? 2 : 1;
+            turnNumber++;
         }
     }
 
-    public bool MyTurn(int playerNumber) {
-        return playerNumber == playersTurn;
-    }
-
-    public void NextTurn() {
-        playersTurn = playersTurn == 1 ? 2 : 1;
-        turnNumber++;
+    public bool MyTurn(PoolPlayer player) {
+        return player.playerNumber == playersTurn;
     }
 
     public int GetTurnNumber() {
         return turnNumber;
     }
 
-    public Vector2 GenerateTablePosition() {
-        float x = Random.Range(transform.position.x - tableSize.x / 2, transform.position.x + tableSize.x / 2);
-        float y = Random.Range(transform.position.y - tableSize.y / 2, transform.position.y + tableSize.y / 2);
-        return new Vector2(x, y);
-    }
-
-    private void OnDrawGizmosSelected() {
-        Gizmos.color = new Color(0.75f, 0.3f, 0.5f, 0.5f);
-        Vector3 size = new Vector3(tableSize.x, 3f, tableSize.y);
-        Gizmos.DrawCube(transform.position, size);
+    public Vector3 GenerateTablePosition() {
+        return Vector3.zero;
     }
 }
