@@ -83,8 +83,13 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
 	public void OnReliableDataProgress(NetworkRunner runner, PlayerRef player, ReliableKey key, float progress) { }
 	public void OnInput(NetworkRunner runner, NetworkInput input) {
 		var data = new NetworkInputData();
-		
-		
+
+		if (Input.GetKey(KeyCode.UpArrow)) {
+			data.shotPowerControl = 1;
+		}
+		if (Input.GetKey(KeyCode.DownArrow)) {
+			data.shotPowerControl = -1;
+		}
 
 		data.direction = FindObjectOfType<PhysicsBall>().ShotDirection();
 		

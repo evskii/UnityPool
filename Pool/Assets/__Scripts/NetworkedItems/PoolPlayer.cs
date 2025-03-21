@@ -17,8 +17,8 @@ public class PoolPlayer : NetworkBehaviour
 	[Header("Shot Settings")]
 	[SerializeField] private float minShotPower;
 	[SerializeField] private float maxShotPower;
-	private float shotPower;
-    
+	[Networked] private float shotPower { get; set;}
+	[SerializeField] private float shotPowerIncreaseSensitivity = 1f;
     
 
 	public override void Spawned() {
@@ -30,31 +30,41 @@ public class PoolPlayer : NetworkBehaviour
 	public void InitPoolPlayer(int playerNumber) {
 		this.playerNumber = playerNumber;
 	}
-    
+
+	private void Update() {
+		
+	}
+
 	public override void FixedUpdateNetwork() {
 		if (HasInputAuthority) {
 			bool myTurn = GameplayManager.instance.MyTurn(this);
 			ball.lineRenderer.enabled = myTurn && HasInputAuthority;
 			if (myTurn && HasInputAuthority) {
 				ball.lineRenderer.SetPosition(0, ball.transform.position);
-				ball.lineRenderer.SetPosition(1, ball.MousePos());
+				
+				Vector3 mousePos = ball.MousePos();
+				mousePos.y = ball.transform.position.y;
+				ball.lineRenderer.SetPosition(1, mousePos);
 			}
 
-			if (Input.mouseScrollDelta.y > 0) {
-				shotPower += 0.1f;
-				shotPower = Mathf.Clamp(shotPower, minShotPower, maxShotPower);
-				GameplayUIController.instance.SetShotPowerFill(EvMath.Map(shotPower, minShotPower, maxShotPower, 0, 1));
+			if (myTurn && HasInputAuthority) {
+				GameplayUIController.instance.ToggleShotPowerUI(true);
+				GameplayUIController.instance.SetShotPowerFill(EvMath.Map(shotPower, minShotPower, maxShotPower, 0, 1));	
+			} else {
+				GameplayUIController.instance.ToggleShotPowerUI(false);
 			}
 		} 
-        
-        
+		
 		if (GetInput(out NetworkInputData data)) {
 			if (HasStateAuthority && GameplayManager.instance.MyTurn(this)) {
 				if (data.buttons.IsSet(NetworkInputData.MOUSEBUTTON0)) {
 					Debug.Log("Force added by " + playerNumber);
 					ball.GetComponent<NetworkRigidbody3D>().Rigidbody.AddForce(data.direction * shotPower, ForceMode.Impulse);
 					GameplayManager.instance.NextTurn(this);
-				}   
+				}
+
+				shotPower += data.shotPowerControl * shotPowerIncreaseSensitivity * Runner.DeltaTime;
+				shotPower = Mathf.Clamp(shotPower, minShotPower, maxShotPower);
 			}
 		}
 	}

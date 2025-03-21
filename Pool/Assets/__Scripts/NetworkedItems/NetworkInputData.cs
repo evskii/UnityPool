@@ -11,5 +11,5 @@ public struct NetworkInputData : INetworkInput
 	
 	public NetworkButtons buttons;
 	public Vector3 direction;
-	public float shotPower;
+	public int shotPowerControl;
 }
