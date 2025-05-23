@@ -41,7 +41,10 @@ public class BallPhysics : MonoBehaviour
             // }
 
             if (isWhiteBall) {
-                Debug.Log(other.contacts[0].point);
+                // Debug.Log(other.contacts[0].point);
+                
+                Vector3 forceDir = (ball.transform.position - transform.position).normalized;
+                ball.GetComponent<Rigidbody>().velocity = forceDir.normalized * 100f;
             }
         }
     }

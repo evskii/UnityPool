@@ -14,6 +14,7 @@ public class Guideline : MonoBehaviour
     #endregion
     
     private LineRenderer lineRenderer;
+    [SerializeField] private Transform circleIndicator;
 
     private void Start() {
         lineRenderer = GetComponent<LineRenderer>();
@@ -28,5 +29,11 @@ public class Guideline : MonoBehaviour
     public void SetGuidelinePoints(Vector3[] points) {
         lineRenderer.positionCount = points.Length;
         lineRenderer.SetPositions(points);
+    }
+    
+    public void SetGuidelinePoints(Vector3[] points, Vector3 circleIndicatorPosition) {
+        SetGuidelinePoints(points);
+        circleIndicator.gameObject.SetActive(true);
+        circleIndicator.transform.position = circleIndicatorPosition;
     }
 }

@@ -5,6 +5,7 @@ using System.Numerics;
 
 using Unity.VisualScripting;
 
+using UnityEditor.PackageManager;
 using UnityEditor.ShaderKeywordFilter;
 
 using UnityEngine;
@@ -28,6 +29,7 @@ public class AIPlayer : MonoBehaviour
 
     [SerializeField] private Vector3 aimDirection;
     private Vector3 ballHitPoint;
+    private Vector3 whiteBallPositionAtContact;
 
     private void Update() {
         Vector3 mousePos = MousePos();
@@ -38,6 +40,8 @@ public class AIPlayer : MonoBehaviour
         RaycastHit hit;
         if (Physics.SphereCast(whiteBall.transform.position, whiteballRadius, aimDirection, out hit, 10)) {
             ballHitPoint = hit.point;
+
+            whiteBallPositionAtContact = whiteBall.transform.position + (aimDirection.normalized * hit.distance);
         }
 
         if (!IsWhiteBallMoving()) {
@@ -60,10 +64,13 @@ public class AIPlayer : MonoBehaviour
     private void SetGuideline() {
         Vector3[] guidelinePoints = new Vector3[3];
         guidelinePoints[0] = whiteBall.transform.position;
-        guidelinePoints[1] = ballHitPoint;
-        guidelinePoints[2] = ballHitPoint + ((targetBall.transform.position - ballHitPoint).normalized * guidelineLength);
+        guidelinePoints[1] = whiteBallPositionAtContact;
+
+        Vector3 direction = (targetBall.transform.position - whiteBallPositionAtContact).normalized;
+        guidelinePoints[2] = ballHitPoint + (direction * guidelineLength);
         
-        Guideline.instance.SetGuidelinePoints(guidelinePoints);
+        Guideline.instance.SetGuidelinePoints(guidelinePoints, whiteBallPositionAtContact);
+
     }
     
     private Vector3 MousePos() {
@@ -96,7 +103,10 @@ public class AIPlayer : MonoBehaviour
         Gizmos.DrawRay(whiteBall.transform.position, aimDirection * 10);
         
         Gizmos.color = Color.blue;
-        Gizmos.DrawSphere(ballHitPoint, 0.05f);
-        
+        // Gizmos.DrawSphere(ballHitPoint, 0.05f);
+
+        Gizmos.color = new Color(1, 1, 1, 0.5f);
+        Gizmos.DrawSphere(whiteBallPositionAtContact, whiteballRadius);
+
     }
 }
