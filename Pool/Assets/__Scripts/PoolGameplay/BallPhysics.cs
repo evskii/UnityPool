@@ -20,16 +20,16 @@ public class BallPhysics : MonoBehaviour
     }
 
     private void Update() {
-        velocity = rb.velocity;
-        magnitude = rb.velocity.magnitude;
-
-        angularVelocity = rb.angularVelocity;
-        angularVelocityMag = rb.angularVelocity.magnitude;
-
-        if (velocity.y > 0) {
-            velocity.y = 0;
-            rb.velocity = velocity;
-        }
+        // velocity = rb.velocity;
+        // magnitude = rb.velocity.magnitude;
+        //
+        // angularVelocity = rb.angularVelocity;
+        // angularVelocityMag = rb.angularVelocity.magnitude;
+        //
+        // if (velocity.y > 0) {
+        //     velocity.y = 0;
+        //     rb.velocity = velocity;
+        // }
     }
 
     private void OnCollisionEnter(Collision other) {

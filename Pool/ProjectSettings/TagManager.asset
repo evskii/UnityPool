@@ -6,6 +6,8 @@ TagManager:
   tags:
   - PlayArea
   - Ball
+  - PocketIdentifier
+  - Cushion
   layers:
   - Default
   - TransparentFX
@@ -16,8 +18,8 @@ TagManager:
   - MouseRaycast
   - Balls
   - CardPlacement
-  - 
-  - 
+  - PocketIdentifier
+  - Cushion
   - 
   - 
   - 
